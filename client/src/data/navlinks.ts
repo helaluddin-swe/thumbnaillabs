@@ -5,4 +5,5 @@ export const navlinks: INavLink[] = [
     { name: "Generate", href: "generate-thumbnail" },
     { name: "Contact", href: "#contact" },
     { name: "About", href: "#about" },
+    { name: "Login", href: "login" },
 ];
