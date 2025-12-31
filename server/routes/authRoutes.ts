@@ -4,6 +4,6 @@ import protect from "../middleware/auth.js"
 const AuthRouter=express.Router()
 AuthRouter.post('/register',registerUser)
 AuthRouter.post('/login',loginUser)
-AuthRouter.post('/verify',protect,verifyUser)
+AuthRouter.get('/verify',protect,verifyUser)
 AuthRouter.post('/logout',logoutUser)
 export default AuthRouter
