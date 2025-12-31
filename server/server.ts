@@ -2,19 +2,38 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import session from "express-session"
+import MongoStore from "connect-mongo";
+import AuthRouter from "./routes/authRoutes.js";
 
 dotenv.config();
 connectDB();
 
 const app = express();
+declare module "express-session"{
+    interface SessionData{
+        isLoggedIn:boolean,
+        userId:string
+    }
+}
 
 // middleware
+app.use(session({secret:process.env.SESSION_SECRET as string,
+    resave:false,
+    saveUninitialized:false,
+    cookie:{maxAge:1000*60*60*24*7},
+    store:MongoStore.create({mongoUrl:process.env.MONGO_URI as string,collectionName:'sessions'})
+}))
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin:["http://localhost:5173","http://localhost:3000"],
+    credentials:true
+}));
 
 app.get("/", (req: Request, res: Response) => {
   res.json();
 });
+app.use("/api",AuthRouter)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
