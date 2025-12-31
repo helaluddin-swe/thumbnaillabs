@@ -33,7 +33,7 @@ app.use(cors({
 app.get("/", (req: Request, res: Response) => {
   res.json();
 });
-app.use("/api",AuthRouter)
+app.use("/api/auth",AuthRouter)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
