@@ -5,6 +5,8 @@ import connectDB from "./config/db.js";
 import session from "express-session"
 import MongoStore from "connect-mongo";
 import AuthRouter from "./routes/authRoutes.js";
+import ThumbailRouter from "./routes/Thumbnail.js";
+import UserRouter from "./routes/UserRouter.js";
 
 dotenv.config();
 connectDB();
@@ -34,6 +36,8 @@ app.get("/", (req: Request, res: Response) => {
   res.json();
 });
 app.use("/api/auth",AuthRouter)
+app.use("/api/thumbnail",ThumbailRouter)
+app.use("/api/user",UserRouter)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
