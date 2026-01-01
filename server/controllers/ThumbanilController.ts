@@ -14,7 +14,8 @@ export const generateThumbnail=async(req:Request,res:Response)=>{
         })
         
         
-    } catch (error) {
+    } catch (error:any) {
+        console.error({message:error.message})
         
     }
 }
