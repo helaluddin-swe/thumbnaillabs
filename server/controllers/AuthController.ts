@@ -1,37 +1,44 @@
-// controller for user register
-import { Request,Response } from "express"
-import bycrypt from "bcrypt"
-import User from "../models/User.js"
-export const registerUser=async(req:Request,res:Response)=>{
-    try {
-        const {name,email,password}=req.body
-        // find user by email
-        const user=await User.findOne({email})
-        if(user){
-            return res.status(400).json({message:"User already exists"})
-        }
-        // encript the password
-        const salt=await bycrypt.genSalt(10)
-        const hashedPassword=await bycrypt.hash(password,salt)
-        const newUser=new User({name,email,password:hashedPassword})
-        await newUser.save()
-        req.session.isLoggedIn=true;
-        req.session.userId=newUser._id
-        return res.json({message:'Account created successfully',
-            user:{
-                _id:newUser._id,
-                name:newUser.name,
-                email:newUser.email
-            }
-        })
-        
-    } catch (error:any) {
-        console.log(error)
-        res.status(500).json({message: error.message})
-        
+import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import User from '../models/User.js';
+
+
+export const registerUser = async (req: Request, res: Response) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-}
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({ name, email, password: hashedPassword });
+    await newUser.save();
+
+    req.session.isLoggedIn = true;
+    req.session.userId = newUser._id.toString();
+
+    return res.json({
+      message: 'Account created successfully',
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email
+      }
+    });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 export const loginUser=async(req:Request,res:Response)=>{
     try {
@@ -41,7 +48,7 @@ export const loginUser=async(req:Request,res:Response)=>{
         if(!user){
             return res.status(400).json({message:"Invalid email or password"})
         }
-        const isPasswordCorrect=await bycrypt.compare(password,user.password)
+        const isPasswordCorrect=await bcrypt.compare(password,user.password)
         if(!isPasswordCorrect){
             return res.status(400).json({message:"Invalid email or pass"})
         }

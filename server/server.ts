@@ -33,7 +33,7 @@ app.use(cors({
 }));
 
 app.get("/", (req: Request, res: Response) => {
-  res.json();
+  res.json("api live");
 });
 app.use("/api/auth",AuthRouter)
 app.use("/api/thumbnail",ThumbailRouter)
